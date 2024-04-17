@@ -31,78 +31,20 @@ const resources = [
 let techLevel = 1; // 初期技術レベル
 let year = 2020; // 初期年
 
-let resourceData = resources.map((resource) => {
-  return {
-    label: resource.name,
-    data: [resource.quantity],
-    fill: false,
-    borderColor: randomColor(),
-  };
-});
-
-let chart = new Chart(
-  document.getElementById("resourceChart").getContext("2d"),
-  {
-    type: "line",
-    data: {
-      labels: [year], // 初期年をラベルに設定
-      datasets: resourceData,
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: false,
-        },
-      },
-      responsive: true,
-      title: {
-        display: true,
-        text: "Resource Quantities Over Time",
-      },
-    },
-  }
-);
-
-function updateChart() {
-  chart.data.labels.push(year);
-  chart.data.datasets.forEach((dataset, index) => {
-    dataset.data.push(resources[index].quantity);
-  });
-  chart.update();
-}
-
-function randomColor() {
-  return (
-    "rgba(" +
-    Math.floor(Math.random() * 256) +
-    "," +
-    Math.floor(Math.random() * 256) +
-    "," +
-    Math.floor(Math.random() * 256) +
-    ",0.5)"
-  );
-}
-
-function updateResourceDisplayAndChart() {
-  updateResourceDisplay();
-  updateChart();
-}
-
 function updateResourceDisplay() {
   const resourceDiv = document.getElementById("resources");
   resourceDiv.innerHTML = ""; // リソース表示をクリア
   resources.forEach((resource) => {
     const resourceElement = document.createElement("p");
-    resourceElement.textContent = `${resource.name}: ${resource.quantity} units`;
+    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0);
+    resourceElement.innerHTML = `${resource.name}: ${resource.quantity} units - Consumption: ${consumption}, Regeneration: ${resource.regenerationRate}`;
     resourceDiv.appendChild(resourceElement);
   });
 }
 
 function advanceYear() {
   resources.forEach((resource) => {
-    let consumption = resource.baseConsumption - techLevel * 10;
-    if (consumption < 0) consumption = 0;
-
+    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0);
     resource.quantity -= consumption;
     resource.quantity += resource.regenerationRate;
     if (resource.quantity < 0) {
@@ -127,4 +69,12 @@ function investInTechnology() {
   }
 }
 
-updateResourceDisplay(); // 初期リソース表示更新
+function updateChart() {
+  chart.data.labels.push(year);
+  chart.data.datasets.forEach((dataset, index) => {
+    dataset.data.push(resources[index].quantity);
+  });
+  chart.update();
+}
+
+// Chart.jsの設定と更新関数は以前の説明を参照
