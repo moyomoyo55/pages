@@ -36,15 +36,15 @@ function updateResourceDisplay() {
   resourceDiv.innerHTML = ""; // リソース表示をクリア
   resources.forEach((resource) => {
     const resourceElement = document.createElement("p");
-    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0); // 消費量を計算
-    resourceElement.innerHTML = `${resource.name}: ${resource.quantity} units<br>Consumption: ${consumption} units/year<br>Regeneration: ${resource.regenerationRate} units/year`;
+    resourceElement.textContent = `${resource.name}: ${resource.quantity} units`;
     resourceDiv.appendChild(resourceElement);
   });
 }
-
 function advanceYear() {
   resources.forEach((resource) => {
-    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0);
+    let consumption = resource.baseConsumption - techLevel * 10;
+    if (consumption < 0) consumption = 0;
+
     resource.quantity -= consumption;
     resource.quantity += resource.regenerationRate;
     if (resource.quantity < 0) {
@@ -54,7 +54,7 @@ function advanceYear() {
   });
   year++;
   document.getElementById("year").textContent = year;
-  updateResourceDisplay(); // UIとグラフの更新
+  updateResourceDisplayAndChart(); // UIとグラフの更新
 }
 
 function investInTechnology() {
@@ -63,11 +63,67 @@ function investInTechnology() {
     resources[0].quantity -= techInvestmentCost;
     techLevel++;
     document.getElementById("techLevel").textContent = techLevel;
-    updateResourceDisplay(); // UIとグラフの更新
+    updateResourceDisplayAndChart(); // UIとグラフの更新
   } else {
     alert("Not enough resources to invest in technology.");
   }
 }
 
-// 初期化時にリソースを表示
-updateResourceDisplay();
+let resourceData = resources.map((resource) => {
+  return {
+    label: resource.name,
+    data: [resource.quantity],
+    fill: false,
+    borderColor: randomColor(),
+  };
+});
+
+let chart = new Chart(
+  document.getElementById("resourceChart").getContext("2d"),
+  {
+    type: "line",
+    data: {
+      labels: [year], // 初期年をラベルに設定
+      datasets: resourceData,
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false,
+        },
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: "Resource Quantities Over Time",
+      },
+    },
+  }
+);
+
+function updateChart() {
+  chart.data.labels.push(year);
+  chart.data.datasets.forEach((dataset, index) => {
+    dataset.data.push(resources[index].quantity);
+  });
+  chart.update();
+}
+
+function randomColor() {
+  return (
+    "rgba(" +
+    Math.floor(Math.random() * 256) +
+    "," +
+    Math.floor(Math.random() * 256) +
+    "," +
+    Math.floor(Math.random() * 256) +
+    ",0.5)"
+  );
+}
+
+function updateResourceDisplayAndChart() {
+  updateResourceDisplay();
+  updateChart();
+}
+
+updateResourceDisplay(); // 初期リソース表示更新
