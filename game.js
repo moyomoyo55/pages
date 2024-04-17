@@ -36,8 +36,8 @@ function updateResourceDisplay() {
   resourceDiv.innerHTML = ""; // リソース表示をクリア
   resources.forEach((resource) => {
     const resourceElement = document.createElement("p");
-    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0);
-    resourceElement.innerHTML = `${resource.name}: ${resource.quantity} units - Consumption: ${consumption}, Regeneration: ${resource.regenerationRate}`;
+    let consumption = Math.max(resource.baseConsumption - techLevel * 10, 0); // 消費量を計算
+    resourceElement.innerHTML = `${resource.name}: ${resource.quantity} units<br>Consumption: ${consumption} units/year<br>Regeneration: ${resource.regenerationRate} units/year`;
     resourceDiv.appendChild(resourceElement);
   });
 }
@@ -54,7 +54,7 @@ function advanceYear() {
   });
   year++;
   document.getElementById("year").textContent = year;
-  updateResourceDisplayAndChart(); // UIとグラフの更新
+  updateResourceDisplay(); // UIとグラフの更新
 }
 
 function investInTechnology() {
@@ -63,18 +63,11 @@ function investInTechnology() {
     resources[0].quantity -= techInvestmentCost;
     techLevel++;
     document.getElementById("techLevel").textContent = techLevel;
-    updateResourceDisplayAndChart(); // UIとグラフの更新
+    updateResourceDisplay(); // UIとグラフの更新
   } else {
     alert("Not enough resources to invest in technology.");
   }
 }
 
-function updateChart() {
-  chart.data.labels.push(year);
-  chart.data.datasets.forEach((dataset, index) => {
-    dataset.data.push(resources[index].quantity);
-  });
-  chart.update();
-}
-
-// Chart.jsの設定と更新関数は以前の説明を参照
+// 初期化時にリソースを表示
+updateResourceDisplay();
