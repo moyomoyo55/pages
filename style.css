@@ -1,0 +1,14 @@
+#game {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#resources div {
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    display: inline-block;
+}

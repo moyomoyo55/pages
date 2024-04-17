@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地球資源管理ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="game">
+        <h1>地球資源管理</h1>
+        <div id="resources">
+            <!-- JavaScriptによってリソース情報がここに挿入されます -->
+        </div>
+        <button onclick="advanceYear()">年を進める</button>
+        <button onclick="investInTechnology()">技術に投資する</button>
+        <p>年: <span id="year">2020</span></p>
+        <p>技術レベル: <span id="techLevel">1</span></p>
+        <canvas id="resourceChart" width="400" height="400"></canvas>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
